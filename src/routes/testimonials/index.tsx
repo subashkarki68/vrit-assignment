@@ -121,8 +121,8 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <div className="h-[500px] w-[700px] bg-red-50 relative flex flex-col items-center justify-center">
-        <div ref={divRef} className="h-full w-full z-10 absolute border-2" />
+      <div className="h-[500px] w-[800px] relative flex flex-col items-center justify-center">
+        <div ref={divRef} className="h-full w-full z-10 absolute" />
 
         {/* Top row */}
         <div className="flex flex-row gap-10">
@@ -140,7 +140,7 @@ function RouteComponent() {
               Testimonials
             </h1>
             <p className="text-center text-gray-700">
-              Here are some testimonials from our satisfied customers.
+              Here are some testimonials.
             </p>
           </div>
 
@@ -148,7 +148,7 @@ function RouteComponent() {
         </div>
 
         {/* Bottom row */}
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-4">
           {imageSections.bottom.map((image, idx) => (
             <ImageComponent key={idx} image={image} index={idx + 5} />
           ))}
