@@ -61,6 +61,7 @@ const ANIMATION_CONFIG = {
 function RouteComponent() {
   const imageRefs = useRef<(HTMLImageElement | null)[]>([])
   const divRef = useRef<HTMLDivElement>(null)
+  const breathingTimelines = useRef<(gsap.core.Timeline | null)[]>([])
 
   const imageProps = {
     height: 100,
@@ -77,6 +78,31 @@ function RouteComponent() {
     [],
   )
 
+  //ANIMATIONS HANDLERS
+  const startBreathingAnimation = useCallback(
+    (image: HTMLImageElement, index: number) => {
+      if (ALL_IMAGES[index]?.type !== 'image') return
+      const tl = gsap.timeline({ repeat: -1, yoyo: true })
+
+      tl.to(image, {
+        y: (ANIMATION_POSITIONS[index]?.y || 0) + (index % 2 ? -45 : 45),
+        duration: 2.5,
+        ease: 'power1.inOut',
+        delay: index * 0.1,
+      })
+
+      breathingTimelines.current[index] = tl
+    },
+    [],
+  )
+
+  const stopBreathingAnimation = useCallback((index: number) => {
+    if (breathingTimelines.current[index] != null) {
+      breathingTimelines.current[index]!.kill()
+      breathingTimelines.current[index] = null
+    }
+  }, [])
+
   const handleMouseEnter = useCallback(() => {
     const images = imageRefs.current
     if (images.some((img) => !img)) return
@@ -86,6 +112,9 @@ function RouteComponent() {
         gsap.to(image, {
           ...ANIMATION_POSITIONS[idx],
           ...ANIMATION_CONFIG,
+          onComplete: () => {
+            startBreathingAnimation(image, idx)
+          },
         })
       }
     })
@@ -93,6 +122,9 @@ function RouteComponent() {
 
   const handleMouseLeave = useCallback(() => {
     const images = imageRefs.current
+    images.forEach((_, idx) => {
+      stopBreathingAnimation(idx)
+    })
     gsap.to(images, {
       x: 0,
       y: 0,
