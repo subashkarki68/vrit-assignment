@@ -9,22 +9,35 @@ export const Route = createFileRoute('/testimonials/')({
 interface ImageSource {
   src: string
   alt: string
+  type: 'image' | 'gif'
 }
 
 const ALL_IMAGES: ImageSource[] = [
   // Top row
-  { src: 'images/image_16.png', alt: 'Image of a Person' },
-  { src: 'images/like_star.gif', alt: 'Like Star' },
-  { src: 'images/image_spec.png', alt: 'Image of a Person wearing Glass' },
+  { src: 'images/image_16.png', alt: 'Image of a Person', type: 'image' },
+  { src: 'images/like_star.gif', alt: 'Like Star', type: 'gif' },
+  {
+    src: 'images/image_spec.png',
+    alt: 'Image of a Person wearing Glass',
+    type: 'image',
+  },
   // Middle row
-  { src: 'images/image_1.png', alt: 'Image of a Person' },
-  { src: 'images/image_2.png', alt: 'Image of a Girl' },
+  { src: 'images/image_1.png', alt: 'Image of a Person', type: 'image' },
+  { src: 'images/image_2.png', alt: 'Image of a Girl', type: 'image' },
   // Bottom row
-  { src: 'images/love_emoji_noti.gif', alt: 'Love Emoji Notification' },
-  { src: 'images/image_longhair.png', alt: 'Image of a Person with Long Hair' },
-  { src: 'images/trophy.gif', alt: 'Trophy GIF' },
-  { src: 'images/image_b.png', alt: 'Image of a Person' },
-  { src: 'images/like_love.gif', alt: 'Like Love GIF' },
+  {
+    src: 'images/love_emoji_noti.gif',
+    alt: 'Love Emoji Notification',
+    type: 'gif',
+  },
+  {
+    src: 'images/image_longhair.png',
+    alt: 'Image of a Person with Long Hair',
+    type: 'image',
+  },
+  { src: 'images/trophy.gif', alt: 'Trophy GIF', type: 'gif' },
+  { src: 'images/image_b.png', alt: 'Image of a Person', type: 'image' },
+  { src: 'images/like_love.gif', alt: 'Like Love GIF', type: 'gif' },
 ]
 
 const ANIMATION_POSITIONS = [
