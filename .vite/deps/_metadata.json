@@ -1,0 +1,73 @@
+{
+  "hash": "63461b6f",
+  "configHash": "245c8add",
+  "lockfileHash": "33d9c2c3",
+  "browserHash": "fe56266d",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/.pnpm/react@19.1.0/node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "48b25067",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../node_modules/.pnpm/react@19.1.0/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "c092ce5b",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/.pnpm/react-dom@19.1.0_react@19.1.0/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "9a7ea569",
+      "needsInterop": true
+    },
+    "@tanstack/react-router": {
+      "src": "../../node_modules/.pnpm/@tanstack+react-router@1.125.6_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/@tanstack/react-router/dist/esm/index.js",
+      "file": "@tanstack_react-router.js",
+      "fileHash": "dab8b001",
+      "needsInterop": false
+    },
+    "web-vitals": {
+      "src": "../../node_modules/.pnpm/web-vitals@4.2.4/node_modules/web-vitals/dist/web-vitals.js",
+      "file": "web-vitals.js",
+      "fileHash": "8add40cb",
+      "needsInterop": false
+    },
+    "@tanstack/react-router-devtools": {
+      "src": "../../node_modules/.pnpm/@tanstack+react-router-devtools@1.125.6_@tanstack+react-router@1.125.6_react-dom@19.1.0_4562cb69ec27025d9e9ed5d991e4251f/node_modules/@tanstack/react-router-devtools/dist/esm/index.js",
+      "file": "@tanstack_react-router-devtools.js",
+      "fileHash": "159e59b1",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-K7ZXLFV5": {
+      "file": "chunk-K7ZXLFV5.js"
+    },
+    "chunk-N5P5IXHH": {
+      "file": "chunk-N5P5IXHH.js"
+    },
+    "chunk-54FEGWNZ": {
+      "file": "chunk-54FEGWNZ.js"
+    },
+    "BaseTanStackRouterDevtoolsPanel-XBUR2BBX": {
+      "file": "BaseTanStackRouterDevtoolsPanel-XBUR2BBX.js"
+    },
+    "FloatingTanStackRouterDevtools-GP4EDJ43": {
+      "file": "FloatingTanStackRouterDevtools-GP4EDJ43.js"
+    },
+    "chunk-XHWM2LS5": {
+      "file": "chunk-XHWM2LS5.js"
+    },
+    "chunk-ZM6LNCIB": {
+      "file": "chunk-ZM6LNCIB.js"
+    },
+    "chunk-2UNUHEGO": {
+      "file": "chunk-2UNUHEGO.js"
+    },
+    "chunk-5WRI5ZAA": {
+      "file": "chunk-5WRI5ZAA.js"
+    }
+  }
+}
