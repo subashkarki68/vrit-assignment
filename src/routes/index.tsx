@@ -1,9 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
 import logo from '../logo.svg'
+import { gsap } from 'gsap'
+import { GSDevTools } from 'gsap/GSDevTools'
 
 export const Route = createFileRoute('/')({
   component: App,
 })
+
+gsap.registerPlugin(GSDevTools)
 
 function App() {
   return (
