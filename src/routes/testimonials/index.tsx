@@ -10,11 +10,17 @@ interface ImageSource {
   src: string
   alt: string
   type: 'image' | 'gif'
+  testimonial?: string
 }
 
 const ALL_IMAGES: ImageSource[] = [
   // Top row
-  { src: 'images/image_16.png', alt: 'Image of a Person', type: 'image' },
+  {
+    src: 'images/image_16.png',
+    alt: 'Image of a Person',
+    type: 'image',
+    testimonial: 'I Love Testimonial',
+  },
   { src: 'images/like_star.gif', alt: 'Like Star', type: 'gif' },
   {
     src: 'images/image_spec.png',
@@ -62,6 +68,7 @@ function RouteComponent() {
   const imageRefs = useRef<(HTMLImageElement | null)[]>([])
   const divRef = useRef<HTMLDivElement>(null)
   const breathingTimelines = useRef<(gsap.core.Timeline | null)[]>([])
+  const mainTimelines = useRef<(gsap.core.Tween | null)[]>([])
 
   const imageProps = {
     height: 100,
@@ -82,6 +89,11 @@ function RouteComponent() {
   const startBreathingAnimation = useCallback(
     (image: HTMLImageElement, index: number) => {
       if (ALL_IMAGES[index]?.type !== 'image') return
+
+      // Kill existing breathing animation first
+      if (breathingTimelines.current[index]) {
+        breathingTimelines.current[index]!.kill()
+      }
       const tl = gsap.timeline({ repeat: -1, yoyo: true })
 
       tl.to(image, {
@@ -109,28 +121,44 @@ function RouteComponent() {
 
     images.forEach((image, idx) => {
       if (image && ANIMATION_POSITIONS[idx]) {
-        gsap.to(image, {
+        if (mainTimelines.current[idx]) {
+          mainTimelines.current[idx]!.kill()
+        }
+
+        // Also stop any breathing animation
+        stopBreathingAnimation(idx)
+        const tween = gsap.to(image, {
           ...ANIMATION_POSITIONS[idx],
           ...ANIMATION_CONFIG,
           onComplete: () => {
             startBreathingAnimation(image, idx)
           },
         })
+        mainTimelines.current[idx] = tween
       }
     })
-  }, [])
+  }, [startBreathingAnimation, stopBreathingAnimation])
 
   const handleMouseLeave = useCallback(() => {
     const images = imageRefs.current
-    images.forEach((_, idx) => {
+
+    images.forEach((image, idx) => {
+      // Kill all existing animations
+      if (mainTimelines.current[idx]) {
+        mainTimelines.current[idx]!.kill()
+        mainTimelines.current[idx] = null
+      }
       stopBreathingAnimation(idx)
+
+      if (image) {
+        gsap.to(image, {
+          x: 0,
+          y: 0,
+          ...ANIMATION_CONFIG,
+        })
+      }
     })
-    gsap.to(images, {
-      x: 0,
-      y: 0,
-      ...ANIMATION_CONFIG,
-    })
-  }, [])
+  }, [stopBreathingAnimation])
 
   useEffect(() => {
     const div = divRef.current
