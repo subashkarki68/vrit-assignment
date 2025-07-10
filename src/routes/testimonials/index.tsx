@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import gsap from 'gsap'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { ArrowRightIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/testimonials/')({
   component: RouteComponent,
@@ -75,6 +76,7 @@ function RouteComponent() {
   const mainTimelines = useRef<(gsap.core.Tween | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
   const testimonialRefs = useRef<(HTMLDivElement | null)[]>([])
+  const arrowRef = useRef<SVGSVGElement>(null)
 
   const imageProps = {
     height: 100,
@@ -242,6 +244,20 @@ function RouteComponent() {
     const container = containerRef.current
     if (!container) return
 
+    gsap.fromTo(
+      arrowRef.current,
+      {
+        x: -2,
+      },
+      {
+        x: 10,
+        duration: 2.5,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut',
+      },
+    )
+
     container.addEventListener('mouseenter', handleContainerMouseEnter)
     container.addEventListener('mouseleave', handleContainerMouseLeave)
 
@@ -307,11 +323,16 @@ function RouteComponent() {
           <ImageComponent image={imageSections.middle[0]} index={3} />
 
           <div className="px-8">
-            <h1 className="text-2xl font-bold text-center mb-4">
-              Testimonials
+            <h1 className="text-2xl font-light text-center mb-4 font-outfit">
+              Head How They Level Up Their Game
             </h1>
-            <p className="text-center text-gray-700">
-              Here are some testimonials.
+            <p className="text-center font-extrabold text-4xl text-gray-700 font-nunito-sans">
+              Skill <span className="text-green-600"> Masters </span>
+              Unite! 🤝
+            </p>
+            <p className="text-center text-lg mt-4 cursor-pointer font-medium">
+              View all Testimonials{' '}
+              <ArrowRightIcon className="inline" ref={arrowRef} />
             </p>
           </div>
 
