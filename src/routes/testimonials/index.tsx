@@ -218,21 +218,21 @@ function RouteComponent() {
     image: ImageSource
     index: number
   }) => (
-      <div
-        onMouseEnter={() => handleImageMouseEnter(index)}
-        onMouseLeave={() => handleImageMouseLeave(index)}
-        className="cursor-pointer"
-      >
-        <img
-          key={index}
-          ref={(el) => {
-            imageRefs.current[index] = el
-          }}
-          {...imageProps}
-          src={image.src}
-          alt={image.alt}
-        />
-      </div>
+    <div
+      onMouseEnter={() => handleImageMouseEnter(index)}
+      onMouseLeave={() => handleImageMouseLeave(index)}
+      className={image.type === 'image' ? 'cursor-pointer' : ''}
+    >
+      <img
+        key={index}
+        ref={(el) => {
+          imageRefs.current[index] = el
+        }}
+        {...imageProps}
+        src={image.src}
+        alt={image.alt}
+      />
+    </div>
   )
 
   return (
