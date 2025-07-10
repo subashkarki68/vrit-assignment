@@ -58,18 +58,19 @@ function RouteComponent() {
 
     if (!card || !content || !bg) return
 
-    gsap.set(bg, { clipPath: 'circle(150% at 0 100%)' })
-
     const tl = gsap.timeline()
     const cardSelector = gsap.utils.selector(card)
 
-    tl.to(
+    tl.fromTo(
       bg,
       {
+        clipPath: 'circle(150% at 0 100%)',
+      },
+      {
         clipPath: 'circle(0% at 0 100%)',
-        backgroundColor: COLOR_SECONDARY_FOREGROUND,
-        duration: 0.6,
-        ease: 'circ.inOut',
+        duration: 0.4,
+        ease: 'power1.inOut',
+        backgroundColor: COLOR_SECONDARY,
       },
       0,
     )
@@ -77,9 +78,8 @@ function RouteComponent() {
       card,
       {
         width: '500px',
-        // clipPath: 'circle(150% at 0 100%)',
-        backgroundColor: COLOR_SECONDARY,
-        duration: 0.6,
+        // backgroundColor: COLOR_SECONDARY,
+        duration: 0.4,
         ease: 'power2.inOut',
       },
       0,
@@ -87,7 +87,6 @@ function RouteComponent() {
       .to(
         content,
         {
-          // clipPath: 'circle(100% at 0 100%)',
           color: COLOR_SECONDARY_FOREGROUND,
           opacity: 1,
           rotation: 90,
@@ -103,8 +102,8 @@ function RouteComponent() {
         cardSelector('h2,p'),
         {
           color: COLOR_SECONDARY_FOREGROUND,
-          duration: 0.6,
-          delay: 0.4,
+          duration: 0.3,
+          delay: 0.1,
         },
         0,
       )
@@ -120,29 +119,22 @@ function RouteComponent() {
     const tl = gsap.timeline()
     const cardSelector = gsap.utils.selector(card)
 
-    // gsap.set(content, {
-    //   clipPath: 'circle(0% at 0 100%)',
-    //   opacity: 1,
-    // })
-
-    gsap.set(bg, { clipPath: 'circle(0% at 0 100%)' })
-
-    tl.to(
+    tl.fromTo(
       bg,
+      { clipPath: 'circle(0% at 0 100%)' },
       {
         clipPath: 'circle(150% at 0 100%)',
+        duration: 0.4,
+        ease: 'power1.inOut',
         backgroundColor: COLOR_SECONDARY_FOREGROUND,
-        duration: 0.6,
-        ease: 'circ.inOut',
       },
       0,
     )
     tl.to(
       content,
       {
-        // backgroundColor: 'oklch(0.5449 0.1807 20.24)',
         opacity: 1,
-        rotation: -0,
+        rotation: 0,
         x: 0,
         y: 0,
         duration: 0.6,
@@ -154,7 +146,7 @@ function RouteComponent() {
       .to(
         card,
         {
-          backgroundColor: COLOR_SECONDARY_FOREGROUND,
+          // backgroundColor: COLOR_SECONDARY_FOREGROUND,
           width: '280px',
           duration: 0.6,
           ease: 'power2.inOut',
@@ -165,15 +157,23 @@ function RouteComponent() {
         cardSelector('h2, p'),
         {
           color: COLOR_SECONDARY,
-          duration: 0.6,
-          delay: 0.4,
+          duration: 0.3,
+          delay: 0.1,
         },
         0,
       )
   }
   return (
     <div className="flex flex-col pt-20 px-10 gap-8">
-      {/* … header … */}
+      <div className="flex flex-col gap-4">
+        <p className="text-xl">
+          Explore our classes and master trending skills!
+        </p>
+        <p className="font-bold text-4xl">
+          Dive Into{' '}
+          <span className="text-primary">What&apos;s Hot Right Now! 🔥</span>
+        </p>
+      </div>
       <div className="flex flex-row gap-8">
         {cardData.map((card, index) => (
           <div
