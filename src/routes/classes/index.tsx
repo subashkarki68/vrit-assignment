@@ -33,6 +33,7 @@ function RouteComponent() {
   )
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
   const contentRefs = useRef<Array<HTMLDivElement | null>>([])
+  const bgRefs = useRef<Array<HTMLDivElement | null>>([])
 
   const handleCardClick = (index: number) => {
     if (expandedCardIndex === index) {
@@ -53,23 +54,32 @@ function RouteComponent() {
   const animateCardOpen = (index: number) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
-    if (!card || !content) return
+    const bg = bgRefs.current[index]
+
+    if (!card || !content || !bg) return
 
     const tl = gsap.timeline()
-    const q = gsap.utils.selector(card)
+    const cardSelector = gsap.utils.selector(card)
 
-    // gsap.set(content, {
-    //   // clipPath: 'circle(0% at 0 100%)',
-    //   opacity: 0.5,
-    // })
-
+    tl.fromTo(
+      bg,
+      {
+        clipPath: 'circle(150% at 0 100%)',
+      },
+      {
+        clipPath: 'circle(0% at 0 100%)',
+        duration: 0.4,
+        ease: 'power1.inOut',
+        backgroundColor: COLOR_SECONDARY,
+      },
+      0,
+    )
     tl.to(
       card,
       {
         width: '500px',
-        // clipPath: 'circle(150% at 0 100%)',
-        backgroundColor: COLOR_SECONDARY,
-        duration: 0.5,
+        // backgroundColor: COLOR_SECONDARY,
+        duration: 0.4,
         ease: 'power2.inOut',
       },
       0,
@@ -77,24 +87,23 @@ function RouteComponent() {
       .to(
         content,
         {
-          // clipPath: 'circle(100% at 0 100%)',
           color: COLOR_SECONDARY_FOREGROUND,
           opacity: 1,
           rotation: 90,
           x: 250,
           y: 160,
-          duration: 0.5,
+          duration: 0.6,
           delay: 0.1,
           ease: 'back.in(1.7)',
         },
         0,
       )
       .to(
-        q('h2,p'),
+        cardSelector('h2,p'),
         {
           color: COLOR_SECONDARY_FOREGROUND,
-          duration: 0.6,
-          delay: 0.4,
+          duration: 0.3,
+          delay: 0.1,
         },
         0,
       )
@@ -103,24 +112,33 @@ function RouteComponent() {
   const animateCardClose = (index: number) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
-    if (!card || !content) return
-    const tl = gsap.timeline()
-    const q = gsap.utils.selector(card)
+    const bg = bgRefs.current[index]
 
-    // gsap.set(content, {
-    //   clipPath: 'circle(0% at 0 100%)',
-    //   opacity: 1,
-    // })
+    if (!card || !content || !bg) return
+
+    const tl = gsap.timeline()
+    const cardSelector = gsap.utils.selector(card)
+
+    tl.fromTo(
+      bg,
+      { clipPath: 'circle(0% at 0 100%)' },
+      {
+        clipPath: 'circle(150% at 0 100%)',
+        duration: 0.4,
+        ease: 'power1.inOut',
+        backgroundColor: COLOR_SECONDARY_FOREGROUND,
+      },
+      0,
+    )
     tl.to(
       content,
       {
-        clipPath: 'circle(150% at 0 100%)',
-        // backgroundColor: 'oklch(0.5449 0.1807 20.24)',
         opacity: 1,
-        rotation: -0,
+        rotation: 0,
         x: 0,
         y: 0,
-        duration: 0.5,
+        duration: 0.6,
+        delay: 0.1,
         ease: 'back.in(1.7)',
       },
       0,
@@ -128,19 +146,19 @@ function RouteComponent() {
       .to(
         card,
         {
-          backgroundColor: COLOR_SECONDARY_FOREGROUND,
+          // backgroundColor: COLOR_SECONDARY_FOREGROUND,
           width: '280px',
-          duration: 0.5,
+          duration: 0.6,
           ease: 'power2.inOut',
         },
         0,
       )
       .to(
-        q('h2, p'),
+        cardSelector('h2, p'),
         {
           color: COLOR_SECONDARY,
-          duration: 0.6,
-          delay: 0.4,
+          duration: 0.3,
+          delay: 0.1,
         },
         0,
       )
@@ -157,38 +175,42 @@ function RouteComponent() {
         </p>
       </div>
       <div className="flex flex-row gap-8">
-        {cardData.map((card, index) => {
-          // const textStyle =
-          //   expandedCardIndex === index ? 'text-white' : 'text-secondary'
-          const textStyle = `text-secondary`
-          return (
+        {cardData.map((card, index) => (
+          <div
+            key={index}
+            ref={(el) => {
+              cardRefs.current[index] = el
+            }}
+            onClick={() => handleCardClick(index)}
+            className="relative overflow-hidden rounded-4xl px-6 py-8 w-[280px] cursor-pointer bg-secondary transition-all duration-300 hover:shadow-lg"
+          >
+            {/* <<< background layer */}
             <div
-              key={index}
               ref={(el) => {
-                cardRefs.current[index] = el
+                bgRefs.current[index] = el
               }}
-              className="bg-secondary-foreground rounded-4xl px-6 py-8 w-[280px] cursor-pointer relative transition-all duration-300 hover:shadow-lg"
-              onClick={() => handleCardClick(index)}
-            >
-              <div className="relative z-10">
-                <div
-                  className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
-                  ref={(el) => {
-                    contentRefs.current[index] = el
-                  }}
-                >
-                  <h2 className={`font-bold text-3xl ${textStyle}`}>
-                    {card.title}
-                  </h2>
-                  <p className={`${textStyle}`}>{card.description}</p>
-                </div>
-                <p className={`font-extrabold text-8xl ${textStyle}`}>
-                  {card.count}
-                </p>
+              className="absolute inset-0 bg-secondary-foreground"
+            />
+
+            {/* <<< always-visible content */}
+            <div className="relative z-10">
+              <div
+                className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
+                ref={(el) => {
+                  contentRefs.current[index] = el
+                }}
+              >
+                <h2 className="font-bold text-3xl text-secondary">
+                  {card.title}
+                </h2>
+                <p className="text-secondary">{card.description}</p>
               </div>
+              <p className="font-extrabold text-8xl text-secondary">
+                {card.count}
+              </p>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
     </div>
   )
