@@ -66,9 +66,9 @@ const ANIMATION_CONFIG = {
 
 function RouteComponent() {
   const imageRefs = useRef<(HTMLImageElement | null)[]>([])
-  const divRef = useRef<HTMLDivElement>(null)
   const breathingTimelines = useRef<(gsap.core.Timeline | null)[]>([])
   const mainTimelines = useRef<(gsap.core.Tween | null)[]>([])
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const imageProps = {
     height: 100,
@@ -115,7 +115,7 @@ function RouteComponent() {
     }
   }, [])
 
-  const handleMouseEnter = useCallback(() => {
+  const handleContainerMouseEnter = useCallback(() => {
     const images = imageRefs.current
     if (images.some((img) => !img)) return
 
@@ -139,7 +139,7 @@ function RouteComponent() {
     })
   }, [startBreathingAnimation, stopBreathingAnimation])
 
-  const handleMouseLeave = useCallback(() => {
+  const handleContainerMouseLeave = useCallback(() => {
     const images = imageRefs.current
 
     images.forEach((image, idx) => {
@@ -154,24 +154,56 @@ function RouteComponent() {
         gsap.to(image, {
           x: 0,
           y: 0,
+          scale: 1,
+          rotation: 0,
           ...ANIMATION_CONFIG,
         })
       }
     })
   }, [stopBreathingAnimation])
 
-  useEffect(() => {
-    const div = divRef.current
-    if (!div) return
+  const handleImageMouseEnter = useCallback((index: number) => {
+    const image = imageRefs.current[index]
+    if (!image) return
 
-    div.addEventListener('mouseenter', handleMouseEnter)
-    div.addEventListener('mouseleave', handleMouseLeave)
+    if (ALL_IMAGES[index]?.type === 'gif') return
+
+    gsap.to(image, {
+      scale: 1.2,
+      rotation: 5,
+      duration: 0.3,
+      boxShadow: '0 10px 10px rgba(0, 0, 0, 0.5)',
+      ease: 'power2.out',
+    })
+  }, [])
+
+  const handleImageMouseLeave = useCallback((index: number) => {
+    const image = imageRefs.current[index]
+    if (!image) return
+
+    if (ALL_IMAGES[index]?.type === 'gif') return
+
+    gsap.to(image, {
+      scale: 1,
+      rotation: 0,
+      duration: 0.3,
+      boxShadow: 'none',
+      ease: 'power2.out',
+    })
+  }, [])
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    container.addEventListener('mouseenter', handleContainerMouseEnter)
+    container.addEventListener('mouseleave', handleContainerMouseLeave)
 
     return () => {
-      div.removeEventListener('mouseenter', handleMouseEnter)
-      div.removeEventListener('mouseleave', handleMouseLeave)
+      container.removeEventListener('mouseenter', handleContainerMouseEnter)
+      container.removeEventListener('mouseleave', handleContainerMouseLeave)
     }
-  }, [handleMouseEnter, handleMouseLeave])
+  }, [handleContainerMouseEnter, handleContainerMouseLeave])
 
   //Img component
   const ImageComponent = ({
@@ -181,22 +213,29 @@ function RouteComponent() {
     image: ImageSource
     index: number
   }) => (
-    <img
-      key={index}
-      ref={(el) => {
-        imageRefs.current[index] = el
-      }}
-      {...imageProps}
-      src={image.src}
-      alt={image.alt}
-    />
+    <div
+      onMouseEnter={() => handleImageMouseEnter(index)}
+      onMouseLeave={() => handleImageMouseLeave(index)}
+      className="cursor-pointer"
+    >
+      <img
+        key={index}
+        ref={(el) => {
+          imageRefs.current[index] = el
+        }}
+        {...imageProps}
+        src={image.src}
+        alt={image.alt}
+      />
+    </div>
   )
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <div className="h-[500px] w-[800px] relative flex flex-col items-center justify-center">
-        <div ref={divRef} className="h-full w-full z-10 absolute" />
-
+      <div
+        ref={containerRef}
+        className="h-[500px] w-[800px] relative flex flex-col items-center justify-center"
+      >
         {/* Top row */}
         <div className="flex flex-row gap-10">
           {imageSections.top.map((image, idx) => (
