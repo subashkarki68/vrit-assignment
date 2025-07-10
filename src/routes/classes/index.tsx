@@ -1,10 +1,150 @@
 import { createFileRoute } from '@tanstack/react-router'
+import gsap from 'gsap'
+import { useRef, useState } from 'react'
 
 export const Route = createFileRoute('/classes/')({
   component: RouteComponent,
 })
 
+const cardData = [
+  {
+    title: 'All Courses',
+    description: "Courses you're powering through right now.",
+    count: '23+',
+  },
+  {
+    title: 'Upcoming Courses',
+    description: 'exciting new courses waiting to boost your skills.',
+    count: '05+',
+  },
+  {
+    title: 'Ongoing Courses',
+    description: `currently happening-don't. miss out the action!`,
+    count: '10+',
+  },
+]
+
+const COLOR_SECONDARY = 'oklch(0.5449 0.1807 20.24)'
+const COLOR_SECONDARY_FOREGROUND = 'oklch(0.9514 0.0152 12.43)'
+
 function RouteComponent() {
+  const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
+    null,
+  )
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([])
+  const contentRefs = useRef<Array<HTMLDivElement | null>>([])
+
+  const handleCardClick = (index: number) => {
+    if (expandedCardIndex === index) {
+      // Close current card
+      animateCardClose(index)
+      setExpandedCardIndex(null)
+    } else {
+      // Close previous card if exists
+      if (expandedCardIndex !== null) {
+        animateCardClose(expandedCardIndex)
+      }
+      // Open new card
+      animateCardOpen(index)
+      setExpandedCardIndex(index)
+    }
+  }
+
+  const animateCardOpen = (index: number) => {
+    const card = cardRefs.current[index]
+    const content = contentRefs.current[index]
+    if (!card || !content) return
+
+    const tl = gsap.timeline()
+    const q = gsap.utils.selector(card)
+
+    // gsap.set(content, {
+    //   // clipPath: 'circle(0% at 0 100%)',
+    //   opacity: 0.5,
+    // })
+
+    tl.to(
+      card,
+      {
+        width: '500px',
+        // clipPath: 'circle(150% at 0 100%)',
+        backgroundColor: COLOR_SECONDARY,
+        duration: 0.5,
+        ease: 'power2.inOut',
+      },
+      0,
+    )
+      .to(
+        content,
+        {
+          // clipPath: 'circle(100% at 0 100%)',
+          color: COLOR_SECONDARY_FOREGROUND,
+          opacity: 1,
+          rotation: 90,
+          x: 250,
+          y: 160,
+          duration: 0.5,
+          delay: 0.1,
+          ease: 'back.in(1.7)',
+        },
+        0,
+      )
+      .to(
+        q('h2,p'),
+        {
+          color: COLOR_SECONDARY_FOREGROUND,
+          duration: 0.6,
+          delay: 0.4,
+        },
+        0,
+      )
+  }
+
+  const animateCardClose = (index: number) => {
+    const card = cardRefs.current[index]
+    const content = contentRefs.current[index]
+    if (!card || !content) return
+    const tl = gsap.timeline()
+    const q = gsap.utils.selector(card)
+
+    // gsap.set(content, {
+    //   clipPath: 'circle(0% at 0 100%)',
+    //   opacity: 1,
+    // })
+    tl.to(
+      content,
+      {
+        clipPath: 'circle(150% at 0 100%)',
+        // backgroundColor: 'oklch(0.5449 0.1807 20.24)',
+        opacity: 1,
+        rotation: -0,
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: 'back.in(1.7)',
+      },
+      0,
+    )
+      .to(
+        card,
+        {
+          backgroundColor: COLOR_SECONDARY_FOREGROUND,
+          width: '280px',
+          duration: 0.5,
+          ease: 'power2.inOut',
+        },
+        0,
+      )
+      .to(
+        q('h2, p'),
+        {
+          color: COLOR_SECONDARY,
+          duration: 0.6,
+          delay: 0.4,
+        },
+        0,
+      )
+  }
   return (
     <div className="flex flex-col pt-20 px-10 gap-8">
       <div className="flex flex-col gap-4">
@@ -16,28 +156,39 @@ function RouteComponent() {
           <span className="text-primary">What&apos;s Hot Right Now! 🔥</span>
         </p>
       </div>
-      <div className="flex flex-row gap-8 cursor-pointer">
-        <div className="bg-secondary-foreground rounded-4xl px-6 py-8 w-fit">
-          <div className="[writing-mode:sideways-lr] text-secondary h-70 p-8">
-            <h2 className="font-bold text-3xl">All Courses</h2>
-            <p>Courses you&apos;re powering through right now.</p>
-          </div>
-          <p className="text-secondary font-extrabold text-8xl">23+</p>
-        </div>
-        <div className="bg-secondary-foreground rounded-4xl px-6 py-8 w-fit">
-          <div className="[writing-mode:sideways-lr] text-secondary h-70 p-8">
-            <h2 className="font-bold text-3xl">All Courses</h2>
-            <p>Courses you&apos;re powering through right now.</p>
-          </div>
-          <p className="text-secondary font-extrabold text-8xl">23+</p>
-        </div>
-        <div className="bg-secondary-foreground rounded-4xl px-6 py-8 w-fit">
-          <div className="[writing-mode:sideways-lr] text-secondary h-70 p-8">
-            <h2 className="font-bold text-3xl">All Courses</h2>
-            <p>Courses you&apos;re powering through right now.</p>
-          </div>
-          <p className="text-secondary font-extrabold text-8xl">23+</p>
-        </div>
+      <div className="flex flex-row gap-8">
+        {cardData.map((card, index) => {
+          // const textStyle =
+          //   expandedCardIndex === index ? 'text-white' : 'text-secondary'
+          const textStyle = `text-secondary`
+          return (
+            <div
+              key={index}
+              ref={(el) => {
+                cardRefs.current[index] = el
+              }}
+              className="bg-secondary-foreground rounded-4xl px-6 py-8 w-[280px] cursor-pointer relative transition-all duration-300 hover:shadow-lg"
+              onClick={() => handleCardClick(index)}
+            >
+              <div className="relative z-10">
+                <div
+                  className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
+                  ref={(el) => {
+                    contentRefs.current[index] = el
+                  }}
+                >
+                  <h2 className={`font-bold text-3xl ${textStyle}`}>
+                    {card.title}
+                  </h2>
+                  <p className={`${textStyle}`}>{card.description}</p>
+                </div>
+                <p className={`font-extrabold text-8xl ${textStyle}`}>
+                  {card.count}
+                </p>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
