@@ -168,11 +168,16 @@ function RouteComponent() {
 
     if (ALL_IMAGES[index]?.type === 'gif') return
 
+    const hasTestimonial = ALL_IMAGES[index]?.testimonial
+    const shadowColor = hasTestimonial
+      ? '0 0 20px 5px rgba(59, 130, 246, 0.8)'
+      : '0 10px 10px rgba(0, 0, 0, 0.5)'
+
     gsap.to(image, {
       scale: 1.2,
       rotation: 5,
       duration: 0.3,
-      boxShadow: '0 10px 10px rgba(0, 0, 0, 0.5)',
+      boxShadow: shadowColor,
       ease: 'power2.out',
     })
   }, [])
@@ -213,21 +218,21 @@ function RouteComponent() {
     image: ImageSource
     index: number
   }) => (
-    <div
-      onMouseEnter={() => handleImageMouseEnter(index)}
-      onMouseLeave={() => handleImageMouseLeave(index)}
-      className="cursor-pointer"
-    >
-      <img
-        key={index}
-        ref={(el) => {
-          imageRefs.current[index] = el
-        }}
-        {...imageProps}
-        src={image.src}
-        alt={image.alt}
-      />
-    </div>
+      <div
+        onMouseEnter={() => handleImageMouseEnter(index)}
+        onMouseLeave={() => handleImageMouseLeave(index)}
+        className="cursor-pointer"
+      >
+        <img
+          key={index}
+          ref={(el) => {
+            imageRefs.current[index] = el
+          }}
+          {...imageProps}
+          src={image.src}
+          alt={image.alt}
+        />
+      </div>
   )
 
   return (
