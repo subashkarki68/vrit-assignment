@@ -33,6 +33,7 @@ function RouteComponent() {
   )
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
   const contentRefs = useRef<Array<HTMLDivElement | null>>([])
+  const bgRefs = useRef<Array<HTMLDivElement | null>>([])
 
   const handleCardClick = (index: number) => {
     if (expandedCardIndex === index) {
@@ -53,22 +54,35 @@ function RouteComponent() {
   const animateCardOpen = (index: number) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
-    if (!card || !content) return
+    const bg = bgRefs.current[index]
+
+    if (!card || !content || !bg) return
+
+    gsap.set(bg, { clipPath: 'circle(0% at 0 100%)' })
 
     const tl = gsap.timeline()
-    const q = gsap.utils.selector(card)
+    const cardSelector = gsap.utils.selector(card)
 
-    // gsap.set(content, {
-    //   // clipPath: 'circle(0% at 0 100%)',
-    //   opacity: 0.5,
-    // })
+    gsap.set(card, {
+      clipPath: 'circle(150% at 0 100%)',
+    })
 
+    tl.to(
+      bg,
+      {
+        clipPath: 'circle(150% at 0 100%)',
+        backgroundColor: COLOR_SECONDARY,
+        duration: 0.5,
+        ease: 'power2.inOut',
+      },
+      0,
+    )
     tl.to(
       card,
       {
         width: '500px',
         // clipPath: 'circle(150% at 0 100%)',
-        backgroundColor: COLOR_SECONDARY,
+        // backgroundColor: COLOR_SECONDARY,
         duration: 0.5,
         ease: 'power2.inOut',
       },
@@ -90,7 +104,7 @@ function RouteComponent() {
         0,
       )
       .to(
-        q('h2,p'),
+        cardSelector('h2,p'),
         {
           color: COLOR_SECONDARY_FOREGROUND,
           duration: 0.6,
@@ -103,18 +117,30 @@ function RouteComponent() {
   const animateCardClose = (index: number) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
-    if (!card || !content) return
+    const bg = bgRefs.current[index]
+
+    if (!card || !content || !bg) return
+
     const tl = gsap.timeline()
-    const q = gsap.utils.selector(card)
+    const cardSelector = gsap.utils.selector(card)
 
     // gsap.set(content, {
     //   clipPath: 'circle(0% at 0 100%)',
     //   opacity: 1,
     // })
     tl.to(
+      bg,
+      {
+        clipPath: 'circle(0% at 0 100%)',
+        backgroundColor: COLOR_SECONDARY_FOREGROUND,
+        duration: 0.5,
+        ease: 'power2.inOut',
+      },
+      0,
+    )
+    tl.to(
       content,
       {
-        clipPath: 'circle(150% at 0 100%)',
         // backgroundColor: 'oklch(0.5449 0.1807 20.24)',
         opacity: 1,
         rotation: -0,
@@ -136,7 +162,7 @@ function RouteComponent() {
         0,
       )
       .to(
-        q('h2, p'),
+        cardSelector('h2, p'),
         {
           color: COLOR_SECONDARY,
           duration: 0.6,
@@ -147,48 +173,44 @@ function RouteComponent() {
   }
   return (
     <div className="flex flex-col pt-20 px-10 gap-8">
-      <div className="flex flex-col gap-4">
-        <p className="text-xl">
-          Explore our classes and master trending skills!
-        </p>
-        <p className="font-bold text-4xl">
-          Dive Into{' '}
-          <span className="text-primary">What&apos;s Hot Right Now! 🔥</span>
-        </p>
-      </div>
+      {/* … header … */}
       <div className="flex flex-row gap-8">
-        {cardData.map((card, index) => {
-          // const textStyle =
-          //   expandedCardIndex === index ? 'text-white' : 'text-secondary'
-          const textStyle = `text-secondary`
-          return (
+        {cardData.map((card, index) => (
+          <div
+            key={index}
+            ref={(el) => {
+              cardRefs.current[index] = el
+            }}
+            onClick={() => handleCardClick(index)}
+            className="relative overflow-hidden rounded-4xl px-6 py-8 w-[280px] cursor-pointer transition-all duration-300 hover:shadow-lg"
+          >
+            {/* <<< background layer */}
             <div
-              key={index}
               ref={(el) => {
-                cardRefs.current[index] = el
+                bgRefs.current[index] = el
               }}
-              className="bg-secondary-foreground rounded-4xl px-6 py-8 w-[280px] cursor-pointer relative transition-all duration-300 hover:shadow-lg"
-              onClick={() => handleCardClick(index)}
-            >
-              <div className="relative z-10">
-                <div
-                  className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
-                  ref={(el) => {
-                    contentRefs.current[index] = el
-                  }}
-                >
-                  <h2 className={`font-bold text-3xl ${textStyle}`}>
-                    {card.title}
-                  </h2>
-                  <p className={`${textStyle}`}>{card.description}</p>
-                </div>
-                <p className={`font-extrabold text-8xl ${textStyle}`}>
-                  {card.count}
-                </p>
+              className="absolute inset-0 bg-secondary-foreground"
+            />
+
+            {/* <<< always-visible content */}
+            <div className="relative z-10">
+              <div
+                className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
+                ref={(el) => {
+                  contentRefs.current[index] = el
+                }}
+              >
+                <h2 className="font-bold text-3xl text-secondary">
+                  {card.title}
+                </h2>
+                <p className="text-secondary">{card.description}</p>
               </div>
+              <p className="font-extrabold text-8xl text-secondary">
+                {card.count}
+              </p>
             </div>
-          )
-        })}
+          </div>
+        ))}
       </div>
     </div>
   )
