@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import gsap from 'gsap'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export const Route = createFileRoute('/testimonials/')({
   component: RouteComponent,
@@ -19,13 +19,16 @@ const ALL_IMAGES: ImageSource[] = [
     src: 'images/image_16.png',
     alt: 'Image of a Person',
     type: 'image',
-    testimonial: 'I Love Testimonial',
+    testimonial:
+      'I was amazed and impressed by the course structure as it was very well organized and easy to follow.',
   },
   { src: 'images/like_star.gif', alt: 'Like Star', type: 'gif' },
   {
     src: 'images/image_spec.png',
     alt: 'Image of a Person wearing Glass',
     type: 'image',
+    testimonial:
+      'The course exceeded my expectations! The content was relevant and the delivery was top-notch.',
   },
   // Middle row
   { src: 'images/image_1.png', alt: 'Image of a Person', type: 'image' },
@@ -40,6 +43,8 @@ const ALL_IMAGES: ImageSource[] = [
     src: 'images/image_longhair.png',
     alt: 'Image of a Person with Long Hair',
     type: 'image',
+    testimonial:
+      'The course was fantastic! The content was engaging and the instructors were knowledgeable.',
   },
   { src: 'images/trophy.gif', alt: 'Trophy GIF', type: 'gif' },
   { src: 'images/image_b.png', alt: 'Image of a Person', type: 'image' },
@@ -69,6 +74,7 @@ function RouteComponent() {
   const breathingTimelines = useRef<(gsap.core.Timeline | null)[]>([])
   const mainTimelines = useRef<(gsap.core.Tween | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
+  const testimonialRefs = useRef<(HTMLDivElement | null)[]>([])
 
   const imageProps = {
     height: 100,
@@ -164,6 +170,8 @@ function RouteComponent() {
 
   const handleImageMouseEnter = useCallback((index: number) => {
     const image = imageRefs.current[index]
+    const testimonialBox = testimonialRefs.current[index]
+
     if (!image) return
 
     if (ALL_IMAGES[index]?.type === 'gif') return
@@ -180,10 +188,30 @@ function RouteComponent() {
       boxShadow: shadowColor,
       ease: 'power2.out',
     })
+
+    if (hasTestimonial && testimonialBox) {
+      gsap.fromTo(
+        testimonialBox,
+        {
+          opacity: 0,
+          y: -20,
+          scale: 0.8,
+          display: 'block',
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.3,
+          ease: 'back.out(1.7)',
+        },
+      )
+    }
   }, [])
 
   const handleImageMouseLeave = useCallback((index: number) => {
     const image = imageRefs.current[index]
+    const testimonialBox = testimonialRefs.current[index]
     if (!image) return
 
     if (ALL_IMAGES[index]?.type === 'gif') return
@@ -195,6 +223,19 @@ function RouteComponent() {
       boxShadow: 'none',
       ease: 'power2.out',
     })
+
+    if (testimonialBox) {
+      gsap.to(testimonialBox, {
+        opacity: 0,
+        y: -20,
+        scale: 0.8,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => {
+          gsap.set(testimonialBox, { display: 'none' })
+        },
+      })
+    }
   }, [])
 
   useEffect(() => {
@@ -221,7 +262,7 @@ function RouteComponent() {
     <div
       onMouseEnter={() => handleImageMouseEnter(index)}
       onMouseLeave={() => handleImageMouseLeave(index)}
-      className={image.type === 'image' ? 'cursor-pointer' : ''}
+      className={`relative ${image.type === 'image' ? 'cursor-pointer' : ''}`}
     >
       <img
         key={index}
@@ -232,6 +273,19 @@ function RouteComponent() {
         src={image.src}
         alt={image.alt}
       />
+      {image.testimonial && (
+        <div
+          ref={(el) => {
+            testimonialRefs.current[index] = el
+          }}
+          className="absolute w-90 -top-0 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-lg z-10 whitespace-nowrap opacity-0 hidden"
+          style={{ display: 'none' }}
+        >
+          <div className="text-sm w-full text-wrap font-medium text-gray-800">
+            {image.testimonial}
+          </div>
+        </div>
+      )}
     </div>
   )
 
