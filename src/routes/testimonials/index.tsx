@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import gsap from 'gsap'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { ArrowRightIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/testimonials/')({
   component: RouteComponent,
@@ -19,13 +20,16 @@ const ALL_IMAGES: ImageSource[] = [
     src: 'images/image_16.png',
     alt: 'Image of a Person',
     type: 'image',
-    testimonial: 'I Love Testimonial',
+    testimonial:
+      'I was amazed and impressed by the course structure as it was very well organized and easy to follow.',
   },
   { src: 'images/like_star.gif', alt: 'Like Star', type: 'gif' },
   {
     src: 'images/image_spec.png',
     alt: 'Image of a Person wearing Glass',
     type: 'image',
+    testimonial:
+      'The course exceeded my expectations! The content was relevant and the delivery was top-notch.',
   },
   // Middle row
   { src: 'images/image_1.png', alt: 'Image of a Person', type: 'image' },
@@ -40,6 +44,8 @@ const ALL_IMAGES: ImageSource[] = [
     src: 'images/image_longhair.png',
     alt: 'Image of a Person with Long Hair',
     type: 'image',
+    testimonial:
+      'The course was fantastic! The content was engaging and the instructors were knowledgeable.',
   },
   { src: 'images/trophy.gif', alt: 'Trophy GIF', type: 'gif' },
   { src: 'images/image_b.png', alt: 'Image of a Person', type: 'image' },
@@ -69,6 +75,8 @@ function RouteComponent() {
   const breathingTimelines = useRef<(gsap.core.Timeline | null)[]>([])
   const mainTimelines = useRef<(gsap.core.Tween | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
+  const testimonialRefs = useRef<(HTMLDivElement | null)[]>([])
+  const arrowRef = useRef<SVGSVGElement>(null)
 
   const imageProps = {
     height: 100,
@@ -164,6 +172,8 @@ function RouteComponent() {
 
   const handleImageMouseEnter = useCallback((index: number) => {
     const image = imageRefs.current[index]
+    const testimonialBox = testimonialRefs.current[index]
+
     if (!image) return
 
     if (ALL_IMAGES[index]?.type === 'gif') return
@@ -180,10 +190,30 @@ function RouteComponent() {
       boxShadow: shadowColor,
       ease: 'power2.out',
     })
+
+    if (hasTestimonial && testimonialBox) {
+      gsap.fromTo(
+        testimonialBox,
+        {
+          opacity: 0,
+          y: -20,
+          scale: 0.8,
+          display: 'block',
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.3,
+          ease: 'back.out(1.7)',
+        },
+      )
+    }
   }, [])
 
   const handleImageMouseLeave = useCallback((index: number) => {
     const image = imageRefs.current[index]
+    const testimonialBox = testimonialRefs.current[index]
     if (!image) return
 
     if (ALL_IMAGES[index]?.type === 'gif') return
@@ -195,11 +225,38 @@ function RouteComponent() {
       boxShadow: 'none',
       ease: 'power2.out',
     })
+
+    if (testimonialBox) {
+      gsap.to(testimonialBox, {
+        opacity: 0,
+        y: -20,
+        scale: 0.8,
+        duration: 0.2,
+        ease: 'power2.in',
+        onComplete: () => {
+          gsap.set(testimonialBox, { display: 'none' })
+        },
+      })
+    }
   }, [])
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
+
+    gsap.fromTo(
+      arrowRef.current,
+      {
+        x: -2,
+      },
+      {
+        x: 10,
+        duration: 2.5,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut',
+      },
+    )
 
     container.addEventListener('mouseenter', handleContainerMouseEnter)
     container.addEventListener('mouseleave', handleContainerMouseLeave)
@@ -218,21 +275,34 @@ function RouteComponent() {
     image: ImageSource
     index: number
   }) => (
-      <div
-        onMouseEnter={() => handleImageMouseEnter(index)}
-        onMouseLeave={() => handleImageMouseLeave(index)}
-        className="cursor-pointer"
-      >
-        <img
-          key={index}
+    <div
+      onMouseEnter={() => handleImageMouseEnter(index)}
+      onMouseLeave={() => handleImageMouseLeave(index)}
+      className={`relative ${image.type === 'image' ? 'cursor-pointer' : ''}`}
+    >
+      <img
+        key={index}
+        ref={(el) => {
+          imageRefs.current[index] = el
+        }}
+        {...imageProps}
+        src={image.src}
+        alt={image.alt}
+      />
+      {image.testimonial && (
+        <div
           ref={(el) => {
-            imageRefs.current[index] = el
+            testimonialRefs.current[index] = el
           }}
-          {...imageProps}
-          src={image.src}
-          alt={image.alt}
-        />
-      </div>
+          className="absolute w-90 -top-0 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-lg z-10 whitespace-nowrap opacity-0 hidden"
+          style={{ display: 'none' }}
+        >
+          <div className="text-sm w-full text-wrap font-medium text-gray-800">
+            {image.testimonial}
+          </div>
+        </div>
+      )}
+    </div>
   )
 
   return (
@@ -253,11 +323,16 @@ function RouteComponent() {
           <ImageComponent image={imageSections.middle[0]} index={3} />
 
           <div className="px-8">
-            <h1 className="text-2xl font-bold text-center mb-4">
-              Testimonials
+            <h1 className="text-2xl font-light text-center mb-4 font-outfit">
+              Head How They Level Up Their Game
             </h1>
-            <p className="text-center text-gray-700">
-              Here are some testimonials.
+            <p className="text-center font-extrabold text-4xl text-gray-700 font-nunito-sans">
+              Skill <span className="text-green-600"> Masters </span>
+              Unite! 🤝
+            </p>
+            <p className="text-center text-lg mt-4 cursor-pointer font-medium">
+              View all Testimonials{' '}
+              <ArrowRightIcon className="inline" ref={arrowRef} />
             </p>
           </div>
 
