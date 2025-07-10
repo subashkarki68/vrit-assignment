@@ -197,14 +197,14 @@ function RouteComponent() {
         {
           opacity: 0,
           y: -20,
-          scale: 0.8,
+          scale: 0.1,
           display: 'block',
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.3,
+          duration: 1.8,
           ease: 'back.out(1.7)',
         },
       )
@@ -294,7 +294,7 @@ function RouteComponent() {
           ref={(el) => {
             testimonialRefs.current[index] = el
           }}
-          className="absolute w-90 -top-0 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-lg z-10 whitespace-nowrap opacity-0 hidden"
+          className="absolute w-60 -top-0 left-1/2 transform -translate-x-1/2 bg-white border border-gray-200 rounded-lg px-3 py-2 shadow-lg z-10 whitespace-nowrap opacity-0 hidden"
           style={{ display: 'none' }}
         >
           <div className="text-sm w-full text-wrap font-medium text-gray-800">
@@ -327,7 +327,7 @@ function RouteComponent() {
               Head How They Level Up Their Game
             </h1>
             <p className="text-center font-extrabold text-4xl text-gray-700 font-nunito-sans">
-              Skill <span className="text-green-600"> Masters </span>
+              Skill <span className="text-primary"> Masters </span>
               Unite! 🤝
             </p>
             <p className="text-center text-lg mt-4 cursor-pointer font-medium">
