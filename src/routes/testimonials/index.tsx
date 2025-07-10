@@ -327,7 +327,7 @@ function RouteComponent() {
               Head How They Level Up Their Game
             </h1>
             <p className="text-center font-extrabold text-4xl text-gray-700 font-nunito-sans">
-              Skill <span className="text-green-600"> Masters </span>
+              Skill <span className="text-primary"> Masters </span>
               Unite! 🤝
             </p>
             <p className="text-center text-lg mt-4 cursor-pointer font-medium">
