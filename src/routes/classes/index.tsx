@@ -58,22 +58,18 @@ function RouteComponent() {
 
     if (!card || !content || !bg) return
 
-    gsap.set(bg, { clipPath: 'circle(0% at 0 100%)' })
+    gsap.set(bg, { clipPath: 'circle(150% at 0 100%)' })
 
     const tl = gsap.timeline()
     const cardSelector = gsap.utils.selector(card)
 
-    gsap.set(card, {
-      clipPath: 'circle(150% at 0 100%)',
-    })
-
     tl.to(
       bg,
       {
-        clipPath: 'circle(150% at 0 100%)',
-        backgroundColor: COLOR_SECONDARY,
-        duration: 0.5,
-        ease: 'power2.inOut',
+        clipPath: 'circle(0% at 0 100%)',
+        backgroundColor: COLOR_SECONDARY_FOREGROUND,
+        duration: 0.6,
+        ease: 'circ.inOut',
       },
       0,
     )
@@ -82,8 +78,8 @@ function RouteComponent() {
       {
         width: '500px',
         // clipPath: 'circle(150% at 0 100%)',
-        // backgroundColor: COLOR_SECONDARY,
-        duration: 0.5,
+        backgroundColor: COLOR_SECONDARY,
+        duration: 0.6,
         ease: 'power2.inOut',
       },
       0,
@@ -97,7 +93,7 @@ function RouteComponent() {
           rotation: 90,
           x: 250,
           y: 160,
-          duration: 0.5,
+          duration: 0.6,
           delay: 0.1,
           ease: 'back.in(1.7)',
         },
@@ -128,13 +124,16 @@ function RouteComponent() {
     //   clipPath: 'circle(0% at 0 100%)',
     //   opacity: 1,
     // })
+
+    gsap.set(bg, { clipPath: 'circle(0% at 0 100%)' })
+
     tl.to(
       bg,
       {
-        clipPath: 'circle(0% at 0 100%)',
+        clipPath: 'circle(150% at 0 100%)',
         backgroundColor: COLOR_SECONDARY_FOREGROUND,
-        duration: 0.5,
-        ease: 'power2.inOut',
+        duration: 0.6,
+        ease: 'circ.inOut',
       },
       0,
     )
@@ -146,7 +145,8 @@ function RouteComponent() {
         rotation: -0,
         x: 0,
         y: 0,
-        duration: 0.5,
+        duration: 0.6,
+        delay: 0.1,
         ease: 'back.in(1.7)',
       },
       0,
@@ -156,7 +156,7 @@ function RouteComponent() {
         {
           backgroundColor: COLOR_SECONDARY_FOREGROUND,
           width: '280px',
-          duration: 0.5,
+          duration: 0.6,
           ease: 'power2.inOut',
         },
         0,
@@ -182,7 +182,7 @@ function RouteComponent() {
               cardRefs.current[index] = el
             }}
             onClick={() => handleCardClick(index)}
-            className="relative overflow-hidden rounded-4xl px-6 py-8 w-[280px] cursor-pointer transition-all duration-300 hover:shadow-lg"
+            className="relative overflow-hidden rounded-4xl px-6 py-8 w-[280px] cursor-pointer bg-secondary transition-all duration-300 hover:shadow-lg"
           >
             {/* <<< background layer */}
             <div
