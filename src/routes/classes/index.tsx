@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import gsap from 'gsap'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { ArrowRight } from 'lucide-react'
+import { useRef, useState } from 'react'
 
 export const Route = createFileRoute('/classes/')({
   component: RouteComponent,
@@ -43,10 +44,10 @@ function RouteComponent() {
   const bgRefs = useRef<Array<HTMLDivElement | null>>([])
   const extrasRefs = useRef<Array<HTMLDivElement | null>>([])
 
-  useLayoutEffect(() => {
-    setExpandedCardIndex(0)
-    animateCardOpen(0, false)
-  }, [])
+  // useEffect(() => {
+  //   setExpandedCardIndex(0)
+  //   animateCardOpen(0, false)
+  // }, [])
 
   const handleCardClick = (index: number, prevExpandedIndex: number) => {
     const isPreviousCardOnLeft = prevExpandedIndex < index
@@ -225,27 +226,28 @@ function RouteComponent() {
 
             <div className="relative z-10">
               <div
-                className="hidden"
+                className="hidden absolute inset-0 flex-col"
                 ref={(el) => {
                   extrasRefs.current[index] = el
                 }}
               >
-                <div>
-                  <p>OKOKOKOK</p>
+                <div className="flex flex-row text-md items-center text-secondary-foreground justify-end gap-2 mb-4">
+                  <p className="font-outfit font-bold">View All Courses</p>
+                  <ArrowRight size={18} />
                 </div>
-                <div className="flex flex-row gap-4 mb-4 justify-center">
+                <div className="flex mt-10 flex-row gap-8 mb-4 justify-center">
                   {ICON_SRCS.map((src, iconIndex) => (
                     <img
                       key={iconIndex}
                       src={src}
                       alt={`Icon ${iconIndex + 1}`}
-                      className="size-24"
+                      className="size-20"
                     />
                   ))}
                 </div>
               </div>
               <div
-                className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
+                className="[writing-mode:sideways-lr] text-secondary h-[300px] p-8"
                 ref={(el) => {
                   contentRefs.current[index] = el
                 }}
