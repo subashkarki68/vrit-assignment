@@ -278,7 +278,7 @@ function RouteComponent() {
                 <h2 className="font-bold text-3xl text-secondary px-2">
                   {card.title}
                 </h2>
-                <p className="text-secondary">{card.description}</p>
+                <p className="text-secondary px-2">{card.description}</p>
               </div>
               <p className="font-extrabold text-8xl text-secondary">
                 {card.count}
