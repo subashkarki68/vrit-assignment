@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import gsap from 'gsap'
 import { ArrowRight } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export const Route = createFileRoute('/classes/')({
   component: RouteComponent,
@@ -44,10 +44,10 @@ function RouteComponent() {
   const bgRefs = useRef<Array<HTMLDivElement | null>>([])
   const extrasRefs = useRef<Array<HTMLDivElement | null>>([])
 
-  // useEffect(() => {
-  //   setExpandedCardIndex(0)
-  //   animateCardOpen(0, false)
-  // }, [])
+  useEffect(() => {
+    setExpandedCardIndex(0)
+    animateCardOpen(0, false)
+  }, [])
 
   const handleCardClick = (index: number, prevExpandedIndex: number) => {
     const isPreviousCardOnLeft = prevExpandedIndex < index
@@ -66,6 +66,27 @@ function RouteComponent() {
     }
   }
 
+  const ANIMATION_HELPER = {
+    //FOR EXTRA like "View All Courses" and icons
+    extra_duration: 0.6,
+
+    //FOR BACKGROUND
+    bg_duration: 0.6,
+
+    //FOR CONTENT
+    content_duration: 0.6,
+    content_delay: 0.1,
+
+    //FOR CARD
+    card_duration: 0.6,
+    initial_card_width: '280px',
+    expanded_card_width: '500px',
+
+    //FOR TEXT like h2 and p
+    text_duration: 0.3,
+    text_delay: 0.1,
+  }
+
   const animateCardOpen = (index: number, isPreviousCardOnLeft: boolean) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
@@ -81,7 +102,7 @@ function RouteComponent() {
     tl.fromTo(
       extra,
       { display: 'hidden', x: startX },
-      { display: 'block', duration: 0.6, x: 0 },
+      { display: 'block', duration: ANIMATION_HELPER.extra_duration, x: 0 },
       0.2,
     )
     tl.fromTo(
@@ -91,7 +112,7 @@ function RouteComponent() {
       },
       {
         clipPath: 'circle(0% at 0 100%)',
-        duration: 0.4,
+        duration: ANIMATION_HELPER.bg_duration,
         ease: 'power1.inOut',
         backgroundColor: COLOR_SECONDARY,
       },
@@ -100,9 +121,9 @@ function RouteComponent() {
     tl.to(
       card,
       {
-        width: '500px',
+        width: ANIMATION_HELPER.expanded_card_width,
         // backgroundColor: COLOR_SECONDARY,
-        duration: 0.4,
+        duration: ANIMATION_HELPER.card_duration,
         ease: 'power2.inOut',
       },
       0,
@@ -113,10 +134,10 @@ function RouteComponent() {
           color: COLOR_SECONDARY_FOREGROUND,
           opacity: 1,
           rotation: 90,
-          x: 250,
-          y: 160,
-          duration: 0.6,
-          delay: 0.1,
+          x: 300,
+          y: 190,
+          duration: ANIMATION_HELPER.content_duration,
+          delay: ANIMATION_HELPER.content_delay,
           ease: 'back.in(1.7)',
         },
         0,
@@ -125,8 +146,8 @@ function RouteComponent() {
         cardSelector('h2,p'),
         {
           color: COLOR_SECONDARY_FOREGROUND,
-          duration: 0.3,
-          delay: 0.1,
+          duration: ANIMATION_HELPER.text_duration,
+          delay: ANIMATION_HELPER.text_delay,
         },
         0,
       )
@@ -147,7 +168,7 @@ function RouteComponent() {
     tl.fromTo(
       extra,
       { display: 'block', x: 0 },
-      { display: 'block', duration: 0.6, x: endX },
+      { display: 'block', duration: ANIMATION_HELPER.extra_duration, x: endX },
       0.2,
     )
     tl.fromTo(
@@ -155,7 +176,7 @@ function RouteComponent() {
       { clipPath: 'circle(0% at 0 100%)' },
       {
         clipPath: 'circle(150% at 0 100%)',
-        duration: 0.4,
+        duration: ANIMATION_HELPER.bg_duration,
         ease: 'power1.inOut',
         backgroundColor: COLOR_SECONDARY_FOREGROUND,
       },
@@ -168,8 +189,8 @@ function RouteComponent() {
         rotation: 0,
         x: 0,
         y: 0,
-        duration: 0.6,
-        delay: 0.1,
+        duration: ANIMATION_HELPER.content_duration,
+        delay: ANIMATION_HELPER.content_delay,
         ease: 'back.in(1.7)',
       },
       0,
@@ -178,8 +199,8 @@ function RouteComponent() {
         card,
         {
           // backgroundColor: COLOR_SECONDARY_FOREGROUND,
-          width: '280px',
-          duration: 0.6,
+          width: ANIMATION_HELPER.initial_card_width,
+          duration: ANIMATION_HELPER.card_duration,
           ease: 'power2.inOut',
         },
         0,
@@ -188,8 +209,8 @@ function RouteComponent() {
         cardSelector('h2, p'),
         {
           color: COLOR_SECONDARY,
-          duration: 0.3,
-          delay: 0.1,
+          duration: ANIMATION_HELPER.text_duration,
+          delay: ANIMATION_HELPER.text_delay,
         },
         0,
       )
@@ -197,11 +218,11 @@ function RouteComponent() {
   return (
     <div className="flex flex-col pt-20 px-10 gap-8">
       <div className="flex flex-col gap-4">
-        <p className="text-xl">
+        <p className="text-xl font-outfit mb-4">
           Explore our classes and master trending skills!
         </p>
-        <p className="font-bold text-4xl">
-          Dive Into{' '}
+        <p className="font-bold text-4xl mb-4">
+          Dive Into
           <span className="text-primary">What&apos;s Hot Right Now! 🔥</span>
         </p>
       </div>
@@ -213,7 +234,7 @@ function RouteComponent() {
               cardRefs.current[index] = el
             }}
             onClick={() => handleCardClick(index, expandedCardIndex ?? 0)}
-            className="relative overflow-hidden rounded-4xl px-6 py-8 w-[280px] cursor-pointer bg-secondary transition-all duration-300 hover:shadow-lg"
+            className={`relative overflow-hidden rounded-4xl px-6 py-8 cursor-pointer bg-secondary transition-all duration-300 hover:shadow-lg`}
           >
             {/* <<< background layer */}
             <div
@@ -237,7 +258,7 @@ function RouteComponent() {
                   <p className="font-outfit font-bold">View All Courses</p>
                   <ArrowRight size={18} />
                 </div>
-                <div className="flex mt-10 flex-row gap-8 mb-4 justify-center">
+                <div className="flex mt-10 flex-row gap-8 justify-center">
                   {ICON_SRCS.map((src, iconIndex) => (
                     <img
                       key={iconIndex}
@@ -249,12 +270,12 @@ function RouteComponent() {
                 </div>
               </div>
               <div
-                className="[writing-mode:sideways-lr] text-secondary h-[300px] p-8"
+                className="[writing-mode:sideways-lr] text-secondary h-[300px] px-4"
                 ref={(el) => {
                   contentRefs.current[index] = el
                 }}
               >
-                <h2 className="font-bold text-3xl text-secondary">
+                <h2 className="font-bold text-3xl text-secondary px-2">
                   {card.title}
                 </h2>
                 <p className="text-secondary">{card.description}</p>
