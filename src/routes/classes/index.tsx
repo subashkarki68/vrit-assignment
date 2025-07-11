@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import gsap from 'gsap'
-import { useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export const Route = createFileRoute('/classes/')({
   component: RouteComponent,
@@ -24,6 +24,13 @@ const cardData = [
   },
 ]
 
+const ICON_SRCS = [
+  'icons/Group.png',
+  'icons/Group-2.png',
+  'icons/Group-3.png',
+  'icons/Group-4.png',
+]
+
 const COLOR_SECONDARY = 'oklch(0.5449 0.1807 20.24)'
 const COLOR_SECONDARY_FOREGROUND = 'oklch(0.9514 0.0152 12.43)'
 
@@ -34,33 +41,48 @@ function RouteComponent() {
   const cardRefs = useRef<Array<HTMLDivElement | null>>([])
   const contentRefs = useRef<Array<HTMLDivElement | null>>([])
   const bgRefs = useRef<Array<HTMLDivElement | null>>([])
+  const extrasRefs = useRef<Array<HTMLDivElement | null>>([])
 
-  const handleCardClick = (index: number) => {
+  useLayoutEffect(() => {
+    setExpandedCardIndex(0)
+    animateCardOpen(0, false)
+  }, [])
+
+  const handleCardClick = (index: number, prevExpandedIndex: number) => {
+    const isPreviousCardOnLeft = prevExpandedIndex < index
     if (expandedCardIndex === index) {
       // Close current card
-      animateCardClose(index)
+      animateCardClose(index, isPreviousCardOnLeft)
       setExpandedCardIndex(null)
     } else {
       // Close previous card if exists
       if (expandedCardIndex !== null) {
-        animateCardClose(expandedCardIndex)
+        animateCardClose(expandedCardIndex, isPreviousCardOnLeft)
       }
       // Open new card
-      animateCardOpen(index)
       setExpandedCardIndex(index)
+      animateCardOpen(index, isPreviousCardOnLeft)
     }
   }
 
-  const animateCardOpen = (index: number) => {
+  const animateCardOpen = (index: number, isPreviousCardOnLeft: boolean) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
     const bg = bgRefs.current[index]
+    const extra = extrasRefs.current[index]
 
-    if (!card || !content || !bg) return
+    if (!card || !content || !bg || !extra) return
 
+    const startX = isPreviousCardOnLeft ? -900 : 900
     const tl = gsap.timeline()
     const cardSelector = gsap.utils.selector(card)
 
+    tl.fromTo(
+      extra,
+      { display: 'hidden', x: startX },
+      { display: 'block', duration: 0.6, x: 0 },
+      0.2,
+    )
     tl.fromTo(
       bg,
       {
@@ -109,16 +131,24 @@ function RouteComponent() {
       )
   }
 
-  const animateCardClose = (index: number) => {
+  const animateCardClose = (index: number, isPreviousCardOnLeft: boolean) => {
     const card = cardRefs.current[index]
     const content = contentRefs.current[index]
     const bg = bgRefs.current[index]
+    const extra = extrasRefs.current[index]
 
-    if (!card || !content || !bg) return
+    if (!card || !content || !bg || !extra) return
 
+    const endX = isPreviousCardOnLeft ? 900 : -900
     const tl = gsap.timeline()
     const cardSelector = gsap.utils.selector(card)
 
+    tl.fromTo(
+      extra,
+      { display: 'block', x: 0 },
+      { display: 'block', duration: 0.6, x: endX },
+      0.2,
+    )
     tl.fromTo(
       bg,
       { clipPath: 'circle(0% at 0 100%)' },
@@ -174,6 +204,7 @@ function RouteComponent() {
           <span className="text-primary">What&apos;s Hot Right Now! 🔥</span>
         </p>
       </div>
+      <div>test</div>
       <div className="flex flex-row gap-8">
         {cardData.map((card, index) => (
           <div
@@ -181,7 +212,7 @@ function RouteComponent() {
             ref={(el) => {
               cardRefs.current[index] = el
             }}
-            onClick={() => handleCardClick(index)}
+            onClick={() => handleCardClick(index, expandedCardIndex ?? 0)}
             className="relative overflow-hidden rounded-4xl px-6 py-8 w-[280px] cursor-pointer bg-secondary transition-all duration-300 hover:shadow-lg"
           >
             {/* <<< background layer */}
@@ -192,8 +223,27 @@ function RouteComponent() {
               className="absolute inset-0 bg-secondary-foreground"
             />
 
-            {/* <<< always-visible content */}
             <div className="relative z-10">
+              <div
+                className="hidden"
+                ref={(el) => {
+                  extrasRefs.current[index] = el
+                }}
+              >
+                <div>
+                  <p>OKOKOKOK</p>
+                </div>
+                <div className="flex flex-row gap-4 mb-4 justify-center">
+                  {ICON_SRCS.map((src, iconIndex) => (
+                    <img
+                      key={iconIndex}
+                      src={src}
+                      alt={`Icon ${iconIndex + 1}`}
+                      className="size-24"
+                    />
+                  ))}
+                </div>
+              </div>
               <div
                 className="[writing-mode:sideways-lr] text-secondary h-70 p-8"
                 ref={(el) => {
