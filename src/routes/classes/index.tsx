@@ -205,7 +205,6 @@ function RouteComponent() {
           <span className="text-primary">What&apos;s Hot Right Now! 🔥</span>
         </p>
       </div>
-      <div>test</div>
       <div className="flex flex-row gap-8">
         {cardData.map((card, index) => (
           <div
@@ -231,7 +230,10 @@ function RouteComponent() {
                   extrasRefs.current[index] = el
                 }}
               >
-                <div className="flex flex-row text-md items-center text-secondary-foreground justify-end gap-2 mb-4">
+                <div
+                  className="flex flex-row text-md items-center text-secondary-foreground justify-end gap-2 mb-4"
+                  onClick={() => alert('View All Courses')}
+                >
                   <p className="font-outfit font-bold">View All Courses</p>
                   <ArrowRight size={18} />
                 </div>
